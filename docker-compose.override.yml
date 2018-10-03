@@ -1,0 +1,19 @@
+version: '2.0'
+
+services:
+    webproxy:
+      build: ./webproxy
+      environment:
+        DEBUG: 'true'
+      networks:
+        - mydev
+
+    magento2:
+      build: ./m2php70
+
+    filebeat:
+      build: ./elasticstack/filebeat
+
+networks:
+  mydev:
+    driver: "bridge"

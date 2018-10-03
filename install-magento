@@ -1,0 +1,54 @@
+
+#!/usr/bin/env bash
+
+su www-data <<EOSU
+/var/www/html/bin/magento setup:install --base-url=$MAGENTO_URL --backend-frontname=$MAGENTO_BACKEND_FRONTNAME --language=$MAGENTO_LANGUAGE --timezone=$MAGENTO_TIMEZONE --currency=$MAGENTO_DEFAULT_CURRENCY --db-host=$MYSQL_HOST --db-name=$MYSQL_DATABASE --db-user=$MYSQL_USER --db-password=$MYSQL_PASSWORD --use-secure=$MAGENTO_USE_SECURE --base-url-secure=$MAGENTO_BASE_URL_SECURE --use-secure-admin=$MAGENTO_USE_SECURE_ADMIN --admin-firstname=$MAGENTO_ADMIN_FIRSTNAME --admin-lastname=$MAGENTO_ADMIN_LASTNAME --admin-email=$MAGENTO_ADMIN_EMAIL --admin-user=$MAGENTO_ADMIN_USERNAME --admin-password=$MAGENTO_ADMIN_PASSWORD
+EOSU
+
+==========
+MAGENTO_URL=http://dev1m2-spark.ca.canon.com.au/
+MAGENTO_BACKEND_FRONTNAME=admin
+MAGENTO_LANGUAGE=en_GB
+MAGENTO_TIMEZONE=Australia/Sydney
+MAGENTO_DEFAULT_CURRENCY=AUD
+
+MYSQL_HOST=db
+MYSQL_DATABASE=magento
+MYSQL_USER=root
+MYSQL_PASSWORD=password123!
+
+MAGENTO_USE_SECURE=0
+MAGENTO_BASE_URL_SECURE=0
+MAGENTO_USE_SECURE_ADMIN=0
+
+MAGENTO_ADMIN_FIRSTNAME=Admin_Firstname
+MAGENTO_ADMIN_LASTNAME=Admin_Lastname
+MAGENTO_ADMIN_EMAIL=amdin@example.com
+
+MAGENTO_ADMIN_USERNAME=admin
+MAGENTO_ADMIN_PASSWORD=magento2018
+MAGENTO_USE_REWRITE=1
+
+sudo docker exec -it `basename \`pwd\``_magento2_1 \
+php /var/www/html/bin/magento setup:install --base-url=$MAGENTO_URL --backend-frontname=$MAGENTO_BACKEND_FRONTNAME --language=$MAGENTO_LANGUAGE --timezone=$MAGENTO_TIMEZONE --currency=$MAGENTO_DEFAULT_CURRENCY --db-host=$MYSQL_HOST --db-name=$MYSQL_DATABASE --db-user=$MYSQL_USER --db-password=$MYSQL_PASSWORD --use-secure=$MAGENTO_USE_SECURE --base-url-secure=$MAGENTO_BASE_URL_SECURE --use-secure-admin=$MAGENTO_USE_SECURE_ADMIN --admin-firstname=$MAGENTO_ADMIN_FIRSTNAME --admin-lastname=$MAGENTO_ADMIN_LASTNAME --admin-email=$MAGENTO_ADMIN_EMAIL --admin-user=$MAGENTO_ADMIN_USERNAME --admin-password=$MAGENTO_ADMIN_PASSWORD --use-rewrites=$MAGENTO_USE_REWRITE
+
+CREATE USER 'root'@'%' IDENTIFIED BY 'password123!';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+ALTER USER 'username'@'ip_address' IDENTIFIED WITH mysql_native_password BY 'password';
+
+#!/bin/bash
+# Delete all containers
+docker rm $(docker ps -a -q)
+# Delete all images
+docker rmi $(docker images -q)
+docker rmi -f $(docker images -q)
+
+sudo addgroup www-data
+sudo adduser $USER www-data
+sudo chown -R root:www-data /var/www
+sudo find /var/www -type f -exec chmod 664 {} \;
+sudo find /var/www -type d -exec chmod 775 {} \;
+sudo find /var/www -type d -exec chmod g+s {} \;
+sudo chown -R www-data:www-data application/cache/ [etc...]

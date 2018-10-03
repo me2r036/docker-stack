@@ -1,0 +1,6 @@
+- input_type: log
+  paths:
+    - /mnt/log/webproxy/*.log
+    - /mnt/log/magento/*/*.log
+    - /mnt/log/varnish/*.log
+    - /mnt/log/redis/*.log
