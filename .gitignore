@@ -1,5 +1,4 @@
 configs/varnish/domains.vcl
 *.log
-.env
 share/*
 var/*
